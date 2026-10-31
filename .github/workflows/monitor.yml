@@ -46,19 +46,32 @@ jobs:
             echo "state.json 이 없습니다. 커밋할 내용 없음."
             exit 0
           fi
-          git config user.name  "github-actions[bot]"
+
+          git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          # 1. state.json만 스테이징 영역에 추가
           git add state.json
+
+          # 2. 변경된 내용이 없으면 종료
           if git diff --cached --quiet; then
             echo "state.json 변경 없음 → 커밋 생략"
             exit 0
           fi
+
+          # 3. bot.log 등 파이썬 실행 중 생긴 기타 임시 파일들을 전부 되돌려 작업 트리 정리
+          git checkout -- .
+          git clean -fd
+
+          # 4. state.json 커밋
           git commit -m "chore: update state.json [skip ci]"
-          # 그 사이 다른 커밋(예: config.json 수정)이 올라왔을 수 있으므로 rebase 후 푸시, 최대 3번 재시도
+
+          # 5. rebase 및 푸시 (최대 3회 재시도)
           for i in 1 2 3; do
             git pull --rebase -X theirs origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
             echo "푸시 실패, ${i}번째 재시도..."
             sleep 5
           done
+
           echo "state.json 푸시 실패"
           exit 1
