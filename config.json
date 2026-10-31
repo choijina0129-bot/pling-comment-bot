@@ -1,0 +1,13 @@
+{
+  "notify_existing_on_first_run": false,
+  "include_replies": true,
+  "max_pages": 10,
+  "ignore_authors": ["루루의하루"],
+  "targets": [
+    {
+      "name": "청람대학교",
+      "url": "https://www.plingcast.com/kr/content/%EC%B2%AD%EB%9E%8C%EB%8C%80%ED%95%99%EA%B5%90_8816/comment/",
+      "enabled": true
+    }
+  ]
+}
